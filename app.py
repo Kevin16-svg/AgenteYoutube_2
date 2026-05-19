@@ -273,8 +273,7 @@ if prompt:
             try:
                 answer = agent.answer(
                     prompt,
-                    chat_history=history_for_agent,
-                    vector_store=None,
+                    history=history_for_agent,
                 )
                 st.markdown(answer)
                 st.session_state.messages.append({"role": "assistant", "content": answer})
