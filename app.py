@@ -76,28 +76,24 @@ except Exception as exc:
 
 st.markdown("""
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
- 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
  
-/* ── BASE ── */
 html, body, [class*="css"] {
     font-family: 'DM Sans', system-ui, sans-serif;
 }
  
-[data-testid="stAppViewContainer"] {
-    background: #F0F0F0;
-}
+[data-testid="stAppViewContainer"] { background: #F0F0F0; }
  
 .block-container {
     padding-top: 1.5rem !important;
     padding-bottom: 3rem !important;
-    max-width: 900px;
+    max-width: 940px;
 }
  
 #MainMenu, footer, header { display: none !important; }
  
-/* ── CHAT MESSAGES ── */
+/* ── MENSAJES DE CHAT ── */
 [data-testid="stChatMessage"] {
     background: #ffffff;
     border: 1px solid #E0E0E0;
@@ -133,40 +129,131 @@ html, body, [class*="css"] {
     width: 36px !important;
     height: 36px !important;
 }
-[data-testid="stChatInputSubmitButton"] button:hover {
-    background: #b8001a !important;
-}
-[data-testid="stChatInputSubmitButton"] svg {
-    fill: white !important;
-    color: white !important;
-}
+[data-testid="stChatInputSubmitButton"] button:hover { background: #b8001a !important; }
+[data-testid="stChatInputSubmitButton"] svg { fill: white !important; color: white !important; }
  
-/* ── SIDEBAR BASE ── */
+/* ── SIDEBAR ── */
 section[data-testid="stSidebar"] {
     background: #ffffff !important;
     border-right: 1px solid #E0E0E0 !important;
 }
-section[data-testid="stSidebar"] > div:first-child {
-    padding: 0 !important;
-}
-/* Ocultar botones nativos visualmente pero mantener funcionalidad */
+section[data-testid="stSidebar"] > div:first-child { padding: 0 !important; }
+ 
+/* Botones nativos de Streamlit: funcionales pero sin estilo propio */
 section[data-testid="stSidebar"] div.stButton > button {
-    opacity: 0 !important;
-    position: absolute !important;
-    pointer-events: none !important;
+    width: 100% !important;
+    background: #F7F7F7 !important;
+    border: 1px solid #E0E0E0 !important;
+    border-radius: 10px !important;
+    color: #282828 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    padding: 10px 14px !important;
+    text-align: left !important;
+    margin-bottom: 4px !important;
+    transition: background 0.15s !important;
+}
+section[data-testid="stSidebar"] div.stButton > button:hover {
+    background: #FFEEEE !important;
+    border-color: #E8001C !important;
+    color: #E8001C !important;
 }
  
-/* ── INPUT FOOTER ── */
-.yt-input-footer {
-    text-align: center;
-    font-size: 11px;
-    color: #999999;
-    margin-top: 4px;
+/* ── SIDEBAR HEADER ── */
+.yt-sb-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 16px 16px 14px;
+    border-bottom: 1px solid #F0F0F0;
+    margin-bottom: 4px;
 }
-
+.yt-sb-logo {
+    width: 36px; height: 36px; background: #E8001C;
+    border-radius: 9px; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0;
+}
+.yt-sb-logo svg { width: 20px; height: 20px; fill: white; }
+.yt-sb-channel { font-size: 13px; font-weight: 700; color: #282828; line-height: 1.3; }
+.yt-sb-powered  { font-size: 11px; color: #999; line-height: 1.3; }
+.yt-sb-section  {
+    padding: 10px 16px 4px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; color: #aaa; text-transform: uppercase;
+}
+.yt-sb-divider { height: 1px; background: #F0F0F0; margin: 8px 0; }
+ 
+/* Caja de datos técnicos */
+.yt-sb-databox {
+    margin: 6px 12px;
+    background: #F7F7F7; border-radius: 10px;
+    padding: 11px 13px; border: 1px solid #E0E0E0;
+}
+.yt-sb-databox-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    color: #aaa; text-transform: uppercase; margin-bottom: 7px;
+}
+.yt-sb-data-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 11px; }
+.yt-sb-data-label { color: #666; }
+.yt-sb-data-val   { font-weight: 600; color: #282828; font-family: monospace; font-size: 10px; }
+.yt-sb-data-val.green { color: #2BA84A; }
+.yt-sb-data-val.warn  { color: #f59e0b; }
+ 
+/* Stats al fondo */
+.yt-sb-stats {
+    margin: 6px 12px 12px;
+    background: #F7F7F7; border-radius: 10px;
+    padding: 11px 13px; border: 1px solid #E0E0E0;
+}
+.yt-sb-stats-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    color: #aaa; text-transform: uppercase; margin-bottom: 7px;
+}
+.yt-sb-stat-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
+.yt-sb-stat-label { color: #666; }
+.yt-sb-stat-val   { font-weight: 600; color: #282828; }
+.yt-sb-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2BA84A; margin-right: 5px; }
+.yt-sb-dot.warn { background: #f59e0b; }
+ 
+/* ── ENCABEZADO PRINCIPAL ── */
+.yt-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 0 18px 0;
+    border-bottom: 2px solid #E8001C;
+    margin-bottom: 20px;
+}
+.yt-header-logo {
+    width: 40px; height: 40px; background: #E8001C;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(232,0,28,0.25);
+}
+.yt-header-logo svg { width: 22px; height: 22px; fill: white; }
+.yt-header-title { font-size: 20px; font-weight: 700; color: #282828; line-height: 1.2; }
+.yt-header-sub   { font-size: 12px; color: #666; margin-top: 2px; }
+.yt-header-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.yt-header-badge {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: #555; background: #F7F7F7;
+    padding: 5px 12px; border-radius: 20px; border: 1px solid #E0E0E0;
+    white-space: nowrap;
+}
+.yt-header-dot { width: 7px; height: 7px; border-radius: 50%; background: #2BA84A; display: inline-block; }
+ 
+/* ── INFO BOX ── */
+.yt-info-box {
+    background: #ffffff;
+    border: 1px solid #E0E0E0;
+    border-left: 3px solid #E8001C;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px; color: #555; line-height: 1.6;
+}
+.yt-info-box b { color: #282828; }
+ 
+/* ── INPUT FOOTER ── */
+.yt-input-footer { text-align: center; font-size: 11px; color: #999; margin-top: 4px; }
+ 
 </style>
 """, unsafe_allow_html=True)
-
 
 # =========================
 # 5. RECURSOS CACHEADOS
