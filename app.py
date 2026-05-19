@@ -10,10 +10,10 @@ import streamlit as st
 # =========================
 
 st.set_page_config(
-    page_title="Las Damitas Histeria · Agente YouTube",
-    page_icon="▶️",
+    page_title="Las Damitas Histeria | Agente YouTube",
+    page_icon="play",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
 )
 
 
@@ -35,7 +35,7 @@ except Exception:
     pass
 
 if not os.environ.get("GOOGLE_API_KEY"):
-    st.error("No se encontro GOOGLE_API_KEY en Secrets ni en el archivo .env.")
+    st.error("Error critico: no se encontro GOOGLE_API_KEY en Secrets o en el archivo .env.")
     st.stop()
 
 try:
@@ -46,7 +46,7 @@ except Exception:
 if not has_gcp_secret and not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
     st.warning(
         "No se encontro gcp_service_account en Secrets ni GOOGLE_APPLICATION_CREDENTIALS. "
-        "Si estas en local, el agente intentara usar credenciales ADC de Google."
+        "En local se intentara usar credenciales ADC de Google."
     )
 
 
@@ -71,192 +71,7 @@ except Exception as exc:
 
 
 # =========================
-# 4. ESTILOS
-# =========================
-
-st.markdown("""
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
- 
-html, body, [class*="css"] {
-    font-family: 'DM Sans', system-ui, sans-serif;
-}
- 
-[data-testid="stAppViewContainer"] { background: #F0F0F0; }
- 
-.block-container {
-    padding-top: 1.5rem !important;
-    padding-bottom: 3rem !important;
-    max-width: 940px;
-}
- 
-#MainMenu, footer, header { display: none !important; }
- 
-/* ── MENSAJES DE CHAT ── */
-[data-testid="stChatMessage"] {
-    background: #ffffff;
-    border: 1px solid #E0E0E0;
-    border-radius: 14px;
-    padding: 4px 8px;
-    margin-bottom: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-[data-testid="stChatMessageContent"] { color: #282828; }
-.stMarkdown p { color: #282828; }
- 
-/* ── INPUT DE CHAT ── */
-[data-testid="stChatInput"] {
-    border: 1.5px solid #E0E0E0 !important;
-    border-radius: 30px !important;
-    background: #ffffff !important;
-    padding: 4px 8px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
-}
-[data-testid="stChatInput"]:focus-within {
-    border-color: #E8001C !important;
-    box-shadow: 0 2px 12px rgba(232,0,28,0.12) !important;
-}
-[data-testid="stChatInput"] textarea {
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 14px !important;
-    color: #282828 !important;
-}
-[data-testid="stChatInputSubmitButton"] button {
-    background: #E8001C !important;
-    border-radius: 50% !important;
-    border: none !important;
-    width: 36px !important;
-    height: 36px !important;
-}
-[data-testid="stChatInputSubmitButton"] button:hover { background: #b8001a !important; }
-[data-testid="stChatInputSubmitButton"] svg { fill: white !important; color: white !important; }
- 
-/* ── SIDEBAR ── */
-section[data-testid="stSidebar"] {
-    background: #ffffff !important;
-    border-right: 1px solid #E0E0E0 !important;
-}
-section[data-testid="stSidebar"] > div:first-child { padding: 0 !important; }
- 
-/* Botones nativos de Streamlit: funcionales pero sin estilo propio */
-section[data-testid="stSidebar"] div.stButton > button {
-    width: 100% !important;
-    background: #F7F7F7 !important;
-    border: 1px solid #E0E0E0 !important;
-    border-radius: 10px !important;
-    color: #282828 !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
-    padding: 10px 14px !important;
-    text-align: left !important;
-    margin-bottom: 4px !important;
-    transition: background 0.15s !important;
-}
-section[data-testid="stSidebar"] div.stButton > button:hover {
-    background: #FFEEEE !important;
-    border-color: #E8001C !important;
-    color: #E8001C !important;
-}
- 
-/* ── SIDEBAR HEADER ── */
-.yt-sb-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 16px 16px 14px;
-    border-bottom: 1px solid #F0F0F0;
-    margin-bottom: 4px;
-}
-.yt-sb-logo {
-    width: 36px; height: 36px; background: #E8001C;
-    border-radius: 9px; display: flex; align-items: center;
-    justify-content: center; flex-shrink: 0;
-}
-.yt-sb-logo svg { width: 20px; height: 20px; fill: white; }
-.yt-sb-channel { font-size: 13px; font-weight: 700; color: #282828; line-height: 1.3; }
-.yt-sb-powered  { font-size: 11px; color: #999; line-height: 1.3; }
-.yt-sb-section  {
-    padding: 10px 16px 4px; font-size: 10px; font-weight: 700;
-    letter-spacing: 0.08em; color: #aaa; text-transform: uppercase;
-}
-.yt-sb-divider { height: 1px; background: #F0F0F0; margin: 8px 0; }
- 
-/* Caja de datos técnicos */
-.yt-sb-databox {
-    margin: 6px 12px;
-    background: #F7F7F7; border-radius: 10px;
-    padding: 11px 13px; border: 1px solid #E0E0E0;
-}
-.yt-sb-databox-title {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-    color: #aaa; text-transform: uppercase; margin-bottom: 7px;
-}
-.yt-sb-data-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 11px; }
-.yt-sb-data-label { color: #666; }
-.yt-sb-data-val   { font-weight: 600; color: #282828; font-family: monospace; font-size: 10px; }
-.yt-sb-data-val.green { color: #2BA84A; }
-.yt-sb-data-val.warn  { color: #f59e0b; }
- 
-/* Stats al fondo */
-.yt-sb-stats {
-    margin: 6px 12px 12px;
-    background: #F7F7F7; border-radius: 10px;
-    padding: 11px 13px; border: 1px solid #E0E0E0;
-}
-.yt-sb-stats-title {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-    color: #aaa; text-transform: uppercase; margin-bottom: 7px;
-}
-.yt-sb-stat-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
-.yt-sb-stat-label { color: #666; }
-.yt-sb-stat-val   { font-weight: 600; color: #282828; }
-.yt-sb-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2BA84A; margin-right: 5px; }
-.yt-sb-dot.warn { background: #f59e0b; }
- 
-/* ── ENCABEZADO PRINCIPAL ── */
-.yt-header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 0 18px 0;
-    border-bottom: 2px solid #E8001C;
-    margin-bottom: 20px;
-}
-.yt-header-logo {
-    width: 40px; height: 40px; background: #E8001C;
-    border-radius: 10px; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 8px rgba(232,0,28,0.25);
-}
-.yt-header-logo svg { width: 22px; height: 22px; fill: white; }
-.yt-header-title { font-size: 20px; font-weight: 700; color: #282828; line-height: 1.2; }
-.yt-header-sub   { font-size: 12px; color: #666; margin-top: 2px; }
-.yt-header-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-.yt-header-badge {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 12px; color: #555; background: #F7F7F7;
-    padding: 5px 12px; border-radius: 20px; border: 1px solid #E0E0E0;
-    white-space: nowrap;
-}
-.yt-header-dot { width: 7px; height: 7px; border-radius: 50%; background: #2BA84A; display: inline-block; }
- 
-/* ── INFO BOX ── */
-.yt-info-box {
-    background: #ffffff;
-    border: 1px solid #E0E0E0;
-    border-left: 3px solid #E8001C;
-    border-radius: 10px;
-    padding: 12px 16px;
-    margin-bottom: 20px;
-    font-size: 13px; color: #555; line-height: 1.6;
-}
-.yt-info-box b { color: #282828; }
- 
-/* ── INPUT FOOTER ── */
-.yt-input-footer { text-align: center; font-size: 11px; color: #999; margin-top: 4px; }
- 
-</style>
-""", unsafe_allow_html=True)
-
-# =========================
-# 5. RECURSOS CACHEADOS
+# 4. RECURSOS
 # =========================
 
 try:
@@ -264,108 +79,581 @@ try:
     agent = get_agent()
 except Exception as exc:
     st.error(
-        "No se pudo inicializar BigQuery. Revisa `gcp_service_account` en "
-        "`.streamlit/secrets.toml` o configura credenciales ADC con Google Cloud."
+        "No se pudo inicializar BigQuery. Revisa gcp_service_account en "
+        "Streamlit Secrets o configura credenciales ADC."
     )
     st.exception(exc)
     st.stop()
 
 
+def format_compact_number(value):
+    try:
+        value = float(value or 0)
+    except Exception:
+        return "0"
+
+    if value >= 1_000_000:
+        return f"{value / 1_000_000:.1f}M"
+    if value >= 1_000:
+        return f"{value / 1_000:.1f}K"
+    return f"{int(value):,}"
+
+
+@st.cache_data(show_spinner=False, ttl=900)
+def load_sidebar_stats():
+    try:
+        metrics = retriever.analytics_summary() or {}
+    except Exception:
+        metrics = {}
+
+    try:
+        segment_stats = retriever.transcript_segments_stats()
+    except Exception:
+        segment_stats = {
+            "existe": False,
+            "videos": 0,
+            "segmentos": 0,
+            "actualizado": None,
+            "embedding_model": None,
+        }
+
+    return metrics, segment_stats
+
+
+metrics, segment_stats = load_sidebar_stats()
+
+
 # =========================
-# 6. SIDEBAR
+# 5. ESTILOS
+# =========================
+
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background: #f7f7f7;
+        color: #111827;
+    }
+
+    .block-container {
+        padding-top: 0rem;
+        padding-bottom: 6rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        max-width: 100%;
+    }
+
+    html, body, [class*="css"] {
+        font-family: Inter, "Segoe UI", sans-serif;
+    }
+
+    header, footer, #MainMenu {
+        display: none !important;
+        visibility: hidden;
+    }
+
+    .yt-header-wrapper {
+        width: 100%;
+        min-height: 60px;
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.2rem;
+        margin: 0rem -2rem 1.5rem -2rem;
+        box-sizing: border-box;
+    }
+
+    .yt-header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .yt-logo, .sidebar-logo, .empty-logo {
+        background: #ff0000;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        letter-spacing: 0;
+    }
+
+    .yt-logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+    }
+
+    .yt-title {
+        color: #0f0f0f;
+        font-size: 1rem;
+        font-weight: 850;
+        line-height: 1.1;
+    }
+
+    .yt-subtitle {
+        color: #6b7280;
+        font-size: 0.75rem;
+        margin-top: 2px;
+    }
+
+    .yt-header-right {
+        display: flex;
+        gap: 0.55rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .yt-pill {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 999px;
+        padding: 0.35rem 0.8rem;
+        font-size: 0.76rem;
+        font-weight: 650;
+        color: #4b5563;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        white-space: nowrap;
+    }
+
+    .welcome-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 1.2rem 1.3rem;
+        margin-bottom: 1.4rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .welcome-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .welcome-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #ff0033, #ff4d6d);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 900;
+        flex-shrink: 0;
+    }
+
+    .welcome-title {
+        font-size: 1rem;
+        font-weight: 850;
+        color: #0f0f0f;
+        margin-bottom: 0.25rem;
+    }
+
+    .welcome-subtitle {
+        font-size: 0.84rem;
+        line-height: 1.5;
+        color: #6b7280;
+    }
+
+    .welcome-tags-text {
+        margin-top: 1rem;
+        color: #374151;
+        font-size: 0.78rem;
+        font-weight: 650;
+    }
+
+    [data-testid="stSidebar"] {
+        background-color: #f2f2f2;
+    }
+
+    [data-testid="stSidebar"] > div:first-child {
+        padding-top: 0.45rem !important;
+    }
+
+    .sidebar-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .sidebar-logo {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        font-size: 0.7rem;
+    }
+
+    .sidebar-main-title {
+        font-size: 0.9rem;
+        font-weight: 850;
+        color: #0f0f0f;
+    }
+
+    .sidebar-subtitle {
+        font-size: 0.67rem;
+        color: #8a8a8a;
+    }
+
+    .sidebar-section-title {
+        font-size: 0.64rem;
+        font-weight: 850;
+        color: #9ca3af;
+        letter-spacing: 0.08rem;
+        margin: 0.48rem 0 0.32rem 0;
+    }
+
+    .sidebar-item {
+        background: transparent;
+        border-radius: 10px;
+        padding: 0.34rem 0.38rem;
+        margin-bottom: 0.04rem;
+        color: #0f0f0f;
+        font-size: 0.74rem;
+        display: grid;
+        grid-template-columns: 24px 1fr;
+        column-gap: 0.35rem;
+        align-items: center;
+    }
+
+    .sidebar-item:hover {
+        background: #e5e5e5;
+    }
+
+    .sidebar-item span {
+        font-weight: 750;
+    }
+
+    .sidebar-item small {
+        grid-column: 2;
+        color: #8a8a8a;
+        font-size: 0.63rem;
+        margin-top: -0.08rem;
+    }
+
+    .sidebar-divider {
+        height: 1px;
+        background: #dddddd;
+        margin: 0.55rem 0;
+    }
+
+    .channel-status-card {
+        border-top: 1px solid #dddddd;
+        padding-top: 0.55rem;
+        margin-top: 0.35rem;
+    }
+
+    .channel-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.72rem;
+        margin-bottom: 0.28rem;
+        gap: 0.8rem;
+    }
+
+    .channel-row span {
+        color: #8a8a8a;
+        font-weight: 520;
+    }
+
+    .channel-row b {
+        color: #0f0f0f;
+        font-weight: 780;
+        text-align: right;
+    }
+
+    .agent-active {
+        color: #e60023 !important;
+    }
+
+    .connection-info {
+        margin-top: 0.8rem;
+        color: #0f0f0f;
+        font-size: 0.82rem;
+    }
+
+    .connection-info code {
+        background: #111827;
+        color: #22c55e;
+        padding: 0.15rem 0.35rem;
+        border-radius: 6px;
+    }
+
+    .stButton > button {
+        border-radius: 999px;
+        border: 1px solid #d1d5db;
+        background-color: #ffffff;
+        color: #374151;
+        font-weight: 700;
+        min-height: 32px;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        font-size: 0.78rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        transition: all 0.2s ease;
+    }
+
+    .stButton > button:hover {
+        background-color: #f1f1f1;
+        border-color: #c7c7c7;
+        color: #0f0f0f;
+        transform: translateY(-1px);
+    }
+
+    .empty-logo, .empty-title, .empty-text {
+        max-width: 560px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    .empty-logo {
+        width: 64px;
+        height: 48px;
+        margin-top: 4rem;
+        margin-bottom: 1.2rem;
+        border-radius: 16px;
+        font-size: 0.9rem;
+        box-shadow: 0 8px 20px rgba(255,0,0,0.25);
+    }
+
+    .empty-title {
+        font-size: 1.35rem;
+        font-weight: 850;
+        color: #111827;
+        margin-bottom: 0.8rem;
+    }
+
+    .empty-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #4b5563;
+    }
+
+    [data-testid="stChatMessage"] {
+        background: transparent !important;
+        padding: 0 !important;
+    }
+
+    [data-testid="stChatMessageContent"] {
+        background: white;
+        color: #0f0f0f;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 1rem 1.2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        margin-bottom: 1rem;
+    }
+
+    .thinking-box {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 0.9rem 1rem;
+        width: fit-content;
+        color: #4b5563;
+        font-size: 0.9rem;
+    }
+
+    .thinking-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #ff0000;
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 0.4; transform: scale(0.9); }
+        50% { opacity: 1; transform: scale(1.1); }
+        100% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    [data-testid="stBottom"] {
+        background: #f1f3f4 !important;
+        border-top: 1px solid #e5e7eb !important;
+        padding: 0.8rem 2rem !important;
+    }
+
+    [data-testid="stBottom"] > div {
+        max-width: 1050px !important;
+        margin: 0 auto !important;
+    }
+
+    [data-baseweb="textarea"] {
+        border-radius: 999px !important;
+        border: 1px solid #d1d5db !important;
+        background: #ffffff !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    }
+
+    [data-baseweb="textarea"] textarea {
+        background: #ffffff !important;
+        color: #111827 !important;
+        font-size: 0.95rem !important;
+        padding-top: 0.95rem !important;
+        padding-left: 1.2rem !important;
+    }
+
+    [data-baseweb="textarea"] textarea::placeholder {
+        color: #9ca3af !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stChatInput"] button {
+        background: #ff0000 !important;
+        color: white !important;
+        border-radius: 999px !important;
+        border: none !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+# =========================
+# 6. HEADER
+# =========================
+
+videos_count = segment_stats.get("videos") or metrics.get("videos") or 0
+
+st.markdown(
+    f"""
+    <div class="yt-header-wrapper">
+        <div class="yt-header-left">
+            <div class="yt-logo">PLAY</div>
+            <div>
+                <div class="yt-title">Las Damitas Histeria</div>
+                <div class="yt-subtitle">Agente de analisis · Gemini + BigQuery</div>
+            </div>
+        </div>
+        <div class="yt-header-right">
+            <div class="yt-pill">Gemini conectado</div>
+            <div class="yt-pill">{format_compact_number(videos_count)} videos</div>
+            <div class="yt-pill">{format_compact_number(segment_stats.get("segmentos"))} segmentos</div>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+# =========================
+# 7. SIDEBAR
 # =========================
 
 with st.sidebar:
-    st.title("Panel del agente")
-
-    st.markdown("### Fuente de datos")
     st.markdown(
-        f"""
-        **Proyecto:** `{PROJECT_ID}`  
-        **Dataset:** `{DATASET_ID}`  
-        **Tabla:** `{TABLE_NAME}`  
-        **Canal:** `{CHANNEL_ID}`
         """
+        <div class="sidebar-title">
+            <span class="sidebar-logo">YT</span>
+            <div>
+                <div class="sidebar-main-title">Las Damitas Histeria</div>
+                <div class="sidebar-subtitle">Agente YouTube Analytics</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
-    st.markdown("---")
-    st.markdown("### Probar conexion")
+    st.markdown('<div class="sidebar-section-title">ACCESOS RAPIDOS</div>', unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="sidebar-item">TOP <span>Top videos</span><small>Ranking por vistas</small></div>
+        <div class="sidebar-item">DIA <span>Mejor dia para publicar</span><small>Views, likes y engagement</small></div>
+        <div class="sidebar-item">TEM <span>Temas exitosos</span><small>Por interaccion</small></div>
+        <div class="sidebar-item">RES <span>Resumen del canal</span><small>Metricas generales</small></div>
+        <div class="sidebar-item">BUS <span>Buscar por tema</span><small>En que episodio hablaron de X</small></div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown('<div class="channel-status-card">', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-section-title">CANAL AL DIA</div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="channel-row"><span>Videos</span><b>{format_compact_number(metrics.get("videos") or videos_count)}</b></div>
+        <div class="channel-row"><span>Views</span><b>{format_compact_number(metrics.get("views"))}</b></div>
+        <div class="channel-row"><span>Likes</span><b>{format_compact_number(metrics.get("likes"))}</b></div>
+        <div class="channel-row"><span>Comentarios</span><b>{format_compact_number(metrics.get("comentarios"))}</b></div>
+        <div class="channel-row"><span>Segmentos</span><b>{format_compact_number(segment_stats.get("segmentos"))}</b></div>
+        <div class="channel-row"><span>Estado</span><b class="agent-active">Activo</b></div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-section-title">BIGQUERY</div>', unsafe_allow_html=True)
+
+    if segment_stats.get("existe"):
+        st.success("Tabla de segmentos lista")
+        st.caption(f"Tabla: `{SEGMENTS_TABLE_ID}`")
+        if segment_stats.get("embedding_model"):
+            st.caption(f"Embedding model: {segment_stats['embedding_model']}")
+        st.caption(f"Actualizado: {segment_stats.get('actualizado')}")
+    else:
+        st.warning("Tabla de segmentos no encontrada")
+        st.caption(f"Esperada: `{SEGMENTS_TABLE_ID}`")
 
     if st.button("Probar BigQuery", use_container_width=True):
         with st.spinner("Verificando conexion con BigQuery..."):
             try:
                 info = retriever.test_connection()
                 st.success("Conexion exitosa")
-                st.write("Tabla:", info["tabla"])
-                st.write("Filas:", info["filas"])
-                st.write("Columnas:", info["columnas"])
+                st.markdown(
+                    f"""
+                    <div class="connection-info">
+                        <p><b>Tabla:</b> <code>{info["tabla"]}</code></p>
+                        <p><b>Filas:</b> <code>{info["filas"]}</code></p>
+                        <p><b>Columnas:</b> <code>{info["columnas"]}</code></p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
             except Exception as exc:
                 st.error("No se pudo conectar con BigQuery.")
                 st.exception(exc)
 
-    st.markdown("---")
-    st.markdown("### Indice BigQuery")
+    st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
 
-    stats = retriever.transcript_segments_stats()
-    if stats["existe"]:
-        st.success("Tabla de segmentos lista")
-        st.caption(f"Videos: {stats['videos']} | Segmentos: {stats['segmentos']}")
-        st.caption(f"Actualizado: {stats['actualizado']}")
-        if stats.get("embedding_model"):
-            st.caption(f"Embedding model: {stats['embedding_model']}")
-    else:
-        st.warning("Tabla de segmentos no encontrada")
-        st.caption("Creala fuera de Streamlit con el script de indexacion.")
-
-    st.caption(f"Tabla destino: `{SEGMENTS_TABLE_ID}`")
-    st.code("python scripts/build_transcript_index.py --force", language="powershell")
-
-    st.markdown("---")
-    st.markdown("### Preguntas sugeridas")
-    st.markdown(
-        """
-        - En que episodio se hablo de dinero?
-        - En que minuto hablaron de familia?
-        - Que temas tienen mejor interaccion?
-        - Que videos tienen mas views?
-        - Que mejorarias del canal?
-        - Que videos rindieron peor de lo esperado?
-        """
-    )
-
-    st.markdown("---")
     if st.button("Limpiar conversacion", use_container_width=True):
         st.session_state.messages = []
         st.rerun()
 
 
 # =========================
-# 7. ENCABEZADO
+# 8. BIENVENIDA
 # =========================
 
 st.markdown(
-    '<div class="main-title">Agente Inteligente para YouTube</div>',
-    unsafe_allow_html=True,
-)
-
-st.markdown(
     """
-    <div class="subtitle">
-    Consulta metricas, videos, temas y transcripciones del canal. Para preguntas de
-    "en que episodio se hablo de X", el agente usa busqueda semantica por segmentos.
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    """
-    <div class="info-box">
-        <b>Modo recomendado</b><br>
-        <span class="small-text">
-        Crea la tabla de segmentos una vez con el script offline. Despues Streamlit solo
-        vectoriza la pregunta del usuario y consulta BigQuery.
-        </span>
+    <div class="welcome-card">
+        <div class="welcome-top">
+            <div class="welcome-icon">AI</div>
+            <div>
+                <div class="welcome-title">Que puede hacer este agente?</div>
+                <div class="welcome-subtitle">
+                    Consulta metricas, rendimiento, temas, transcripciones, recomendaciones,
+                    mejores dias para publicar y momentos aproximados dentro de episodios.
+                </div>
+            </div>
+        </div>
+        <div class="welcome-tags-text">
+            Analytics · Videos · Engagement · Transcripciones · Gemini AI · BigQuery
+        </div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -373,23 +661,28 @@ st.markdown(
 
 
 # =========================
-# 8. MEMORIA DE CONVERSACION
+# 9. MEMORIA
 # =========================
 
-if "messages" not in st.session_state or not st.session_state.messages:
-    st.session_state.messages = [
-        {
-            "role": "assistant",
-            "content": (
-                "Hola. Puedo ayudarte a analizar videos, metricas, temas, "
-                "transcripciones y recomendaciones del canal."
-            ),
-        }
-    ]
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+if not st.session_state.messages:
+    st.markdown('<div class="empty-logo">PLAY</div>', unsafe_allow_html=True)
+    st.markdown('<div class="empty-title">Hola, soy tu agente de YouTube</div>', unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="empty-text">
+            Puedo analizar el rendimiento de <b>Las Damitas Histeria</b>, encontrar
+            en que episodio hablaron de un tema y recomendarte decisiones con datos.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # =========================
-# 9. HISTORIAL
+# 10. HISTORIAL
 # =========================
 
 for message in st.session_state.messages:
@@ -398,34 +691,42 @@ for message in st.session_state.messages:
 
 
 # =========================
-# 10. CHAT
+# 11. CHAT
 # =========================
 
-prompt = st.chat_input("Ej: En que episodio se hablo de productividad?")
+prompt = st.chat_input("Pregunta sobre el canal... ej: Que temas tuvieron mas engagement?")
 
 if prompt:
     history_for_agent = st.session_state.messages[-8:]
-
     st.session_state.messages.append({"role": "user", "content": prompt})
+
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("Consultando BigQuery y transcripciones..."):
-            try:
-                answer = agent.answer(
-                    prompt,
-                    history=history_for_agent,
-                )
-                st.markdown(answer)
-                st.session_state.messages.append({"role": "assistant", "content": answer})
-            except Exception as exc:
-                message = (
-                    "**Ocurrio un error al procesar tu pregunta.**\n\n"
-                    f"`{str(exc)}`\n\n"
-                    "Revisa Secrets, permisos de BigQuery y que la tabla de segmentos exista "
-                    "si estas preguntando por momentos dentro de transcripciones."
-                )
-                st.error(message)
-                st.exception(exc)
-                st.session_state.messages.append({"role": "assistant", "content": message})
+        thinking_placeholder = st.empty()
+        thinking_placeholder.markdown(
+            """
+            <div class="thinking-box">
+                <div class="thinking-dot"></div>
+                Analizando metricas y transcripciones...
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        try:
+            answer = agent.answer(prompt, history=history_for_agent)
+            thinking_placeholder.empty()
+            st.markdown(answer)
+            st.session_state.messages.append({"role": "assistant", "content": answer})
+        except Exception as exc:
+            thinking_placeholder.empty()
+            error_message = (
+                "**Ocurrio un error al procesar tu pregunta.**\n\n"
+                f"`{str(exc)}`\n\n"
+                "Revisa Secrets, permisos de BigQuery y la tabla de segmentos."
+            )
+            st.error(error_message)
+            st.exception(exc)
+            st.session_state.messages.append({"role": "assistant", "content": error_message})
