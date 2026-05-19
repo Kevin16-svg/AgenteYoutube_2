@@ -97,6 +97,9 @@ html, body, [class*="css"] {
  
 #MainMenu, footer, header { display: none !important; }
 
+</style>
+""", unsafe_allow_html=True)
+
 
 # =========================
 # 5. RECURSOS CACHEADOS
