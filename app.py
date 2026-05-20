@@ -543,15 +543,20 @@ st.markdown(
     /* Textarea real */
     [data-baseweb="textarea"] textarea {
         background: #ffffff !important;
-        color: #ffffff !important;
+        color: #111827 !important;
         font-size: 0.95rem !important;
         padding-top: 0.95rem !important;
         padding-left: 1.2rem !important;
     }
+
+[data-baseweb="textarea"] textarea::placeholder {
+    color: #6b7280 !important;
+    opacity: 1 !important;
+}
     
     /* Placeholder */
     [data-baseweb="textarea"] textarea::placeholder {
-        color: #ffffff !important;
+        color: #6b7280 !important;
         opacity: 1 !important;
     }
     
@@ -574,6 +579,16 @@ st.markdown(
         color: white !important;
         border-radius: 999px !important;
         border: none !important;
+    }
+
+    /* Elimina fondo gris del contenedor padre */
+    [data-testid="stChatInput"] {
+        background: transparent !important;
+    }
+    
+    /* Contenedor externo completo */
+    [data-testid="stBottom"] section {
+        background: transparent !important;
     }
 
     </style>
