@@ -520,7 +520,7 @@ st.markdown(
     ========================= */
     
     [data-testid="stBottom"] {
-        background: #0f0f0f !important;
+        background: #ffffff !important;
         border-top: 1px solid #272727 !important;
         padding: 0.9rem 2rem !important;
     }
@@ -535,14 +535,14 @@ st.markdown(
     /* Caja completa del input */
     [data-baseweb="textarea"] {
         border-radius: 999px !important;
-        border: 1px solid #303030 !important;
+        border: 1px solid #919191 !important;
         background: #1f1f1f !important;
         box-shadow: none !important;
     }
     
     /* Textarea real */
     [data-baseweb="textarea"] textarea {
-        background: #1f1f1f !important;
+        background: #ffffff !important;
         color: #f1f1f1 !important;
         font-size: 0.95rem !important;
         padding-top: 0.95rem !important;
@@ -551,7 +551,7 @@ st.markdown(
     
     /* Placeholder */
     [data-baseweb="textarea"] textarea::placeholder {
-        color: #aaaaaa !important;
+        color: #ffffff !important;
         opacity: 1 !important;
     }
     
