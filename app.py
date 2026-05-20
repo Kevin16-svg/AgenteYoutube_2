@@ -516,26 +516,40 @@ st.markdown(
     }
 
     /* =========================
-       BARRA INFERIOR DEL CHAT
+       BARRA INFERIOR CHAT
     ========================= */
     
     [data-testid="stBottom"] {
         background: #ffffff !important;
-        border-top: 1px solid #272727 !important;
-        padding: 0.9rem 2rem !important;
+        border-top: 1px solid #e5e7eb !important;
+        padding: 0.7rem 1.5rem !important;
     }
     
-    /* Contenedor interno */
-    [data-testid="stBottom"] > div {
-        max-width: 1050px !important;
-        margin: 0 auto !important;
+    /* Elimina fondos grises automáticos */
+    [data-testid="stBottom"] section,
+    [data-testid="stBottom"] > div,
+    [data-testid="stChatInput"] {
         background: transparent !important;
     }
     
-    /* Caja completa del input */
+    /* Contenedor completo del chat */
+    [data-testid="stChatInput"] form {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+        max-width: 1100px !important;
+        margin: 0 auto !important;
+    }
+    
+    /* Hace que el input ocupe todo el espacio */
+    [data-testid="stChatInput"] form > div:first-child {
+        flex: 1 !important;
+    }
+    
+    /* Caja del textarea */
     [data-baseweb="textarea"] {
         border-radius: 999px !important;
-        border: 1px solid #ffffff !important;
+        border: 1px solid #d1d5db !important;
         background: #ffffff !important;
         box-shadow: none !important;
     }
@@ -548,11 +562,6 @@ st.markdown(
         padding-top: 0.95rem !important;
         padding-left: 1.2rem !important;
     }
-
-[data-baseweb="textarea"] textarea::placeholder {
-    color: #6b7280 !important;
-    opacity: 1 !important;
-}
     
     /* Placeholder */
     [data-baseweb="textarea"] textarea::placeholder {
@@ -562,33 +571,22 @@ st.markdown(
     
     /* Botón enviar */
     [data-testid="stChatInput"] button {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
+        border-radius: 999px !important;
         background: #ff0000 !important;
         color: white !important;
-        border-radius: 999px !important;
         border: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-top: 0 !important;
     }
     
-    /* Hover botón */
+    /* Hover */
     [data-testid="stChatInput"] button:hover {
         background: #cc0000 !important;
-    }
-
-    /* Botón de enviar mensaje */
-    [data-testid="stChatInput"] button {
-        background: #ff0000 !important;
-        color: white !important;
-        border-radius: 999px !important;
-        border: none !important;
-    }
-
-    /* Elimina fondo gris del contenedor padre */
-    [data-testid="stChatInput"] {
-        background: transparent !important;
-    }
-    
-    /* Contenedor externo completo */
-    [data-testid="stBottom"] section {
-        background: transparent !important;
     }
 
     </style>
