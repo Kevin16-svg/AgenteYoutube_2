@@ -124,17 +124,20 @@ metrics, segment_stats = load_sidebar_stats()
 
 
 # =========================
-# 5. ESTILOS
+# 5. ESTILOS GENERALES DE LA APP
 # =========================
 
 st.markdown(
     """
     <style>
+
+    /* Fondo general de toda la aplicación */
     .stApp {
         background: #f7f7f7;
         color: #111827;
     }
 
+    /* Contenedor principal donde vive el contenido */
     .block-container {
         padding-top: 0rem;
         padding-bottom: 6rem;
@@ -143,14 +146,26 @@ st.markdown(
         max-width: 100%;
     }
 
+    /* Fuente general de la app */
     html, body, [class*="css"] {
         font-family: Inter, "Segoe UI", sans-serif;
     }
 
+    /* Oculta elementos nativos de Streamlit: menú, header y footer */
     header, footer, #MainMenu {
         display: none !important;
         visibility: hidden;
     }
+
+    [data-testid="stChatMessage"],
+    [data-testid="stChatInput"],
+    [data-testid="stBottom"] {
+        display: none !important;
+    }
+
+    /* =========================
+       HEADER SUPERIOR TIPO YOUTUBE
+    ========================= */
 
     .yt-header-wrapper {
         width: 100%;
@@ -171,6 +186,7 @@ st.markdown(
         gap: 0.8rem;
     }
 
+    /* Logos reutilizados: header, sidebar y pantalla vacía */
     .yt-logo, .sidebar-logo, .empty-logo {
         background: #ff0000;
         color: white;
@@ -208,6 +224,7 @@ st.markdown(
         flex-wrap: wrap;
     }
 
+    /* Etiquetas tipo píldora del header */
     .yt-pill {
         background: #ffffff;
         border: 1px solid #e5e7eb;
@@ -219,6 +236,10 @@ st.markdown(
         box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         white-space: nowrap;
     }
+
+    /* =========================
+       TARJETA DE BIENVENIDA
+    ========================= */
 
     .welcome-card {
         background: #ffffff;
@@ -268,6 +289,10 @@ st.markdown(
         font-size: 0.78rem;
         font-weight: 650;
     }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
 
     [data-testid="stSidebar"] {
         background-color: #f2f2f2;
@@ -344,6 +369,7 @@ st.markdown(
         margin: 0.55rem 0;
     }
 
+    /* Estado del canal dentro del sidebar */
     .channel-status-card {
         border-top: 1px solid #dddddd;
         padding-top: 0.55rem;
@@ -374,6 +400,7 @@ st.markdown(
         color: #e60023 !important;
     }
 
+    /* Información de conexión: proyecto, dataset, tabla, etc. */
     .connection-info {
         margin-top: 0.8rem;
         color: #0f0f0f;
@@ -386,6 +413,10 @@ st.markdown(
         padding: 0.15rem 0.35rem;
         border-radius: 6px;
     }
+
+    /* =========================
+       BOTONES DE STREAMLIT
+    ========================= */
 
     .stButton > button {
         border-radius: 999px;
@@ -407,6 +438,10 @@ st.markdown(
         color: #0f0f0f;
         transform: translateY(-1px);
     }
+
+    /* =========================
+       PANTALLA VACÍA / ESTADO INICIAL
+    ========================= */
 
     .empty-logo, .empty-title, .empty-text {
         max-width: 560px;
@@ -438,6 +473,10 @@ st.markdown(
         color: #4b5563;
     }
 
+    /* =========================
+       MENSAJES DEL CHAT
+    ========================= */
+
     [data-testid="stChatMessage"] {
         background: transparent !important;
         padding: 0 !important;
@@ -453,6 +492,7 @@ st.markdown(
         margin-bottom: 1rem;
     }
 
+    /* Caja que aparece mientras el agente está pensando */
     .thinking-box {
         display: flex;
         align-items: center;
@@ -474,11 +514,16 @@ st.markdown(
         animation: pulse 1s infinite;
     }
 
+    /* Animación del punto rojo de carga */
     @keyframes pulse {
         0% { opacity: 0.4; transform: scale(0.9); }
         50% { opacity: 1; transform: scale(1.1); }
         100% { opacity: 0.4; transform: scale(0.9); }
     }
+
+    /* =========================
+       BARRA INFERIOR DEL CHAT
+    ========================= */
 
     [data-testid="stBottom"] {
         background: #ffffff !important;
@@ -491,6 +536,7 @@ st.markdown(
         margin: 0 auto !important;
     }
 
+    /* Caja de texto donde el usuario escribe */
     [data-baseweb="textarea"] {
         border-radius: 999px !important;
         border: 1px solid #d1d5db !important;
@@ -511,12 +557,14 @@ st.markdown(
         opacity: 1 !important;
     }
 
+    /* Botón de enviar mensaje */
     [data-testid="stChatInput"] button {
-        background: #ffffff !important;
+        background: #ff0000 !important;
         color: white !important;
         border-radius: 999px !important;
         border: none !important;
     }
+
     </style>
     """,
     unsafe_allow_html=True,
