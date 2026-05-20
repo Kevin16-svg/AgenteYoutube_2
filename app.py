@@ -536,7 +536,7 @@ st.markdown(
     [data-baseweb="textarea"] {
         border-radius: 999px !important;
         border: 1px solid #ffffff !important;
-        background: #1f1f1f !important;
+        background: #ffffff !important;
         box-shadow: none !important;
     }
     
