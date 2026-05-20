@@ -221,7 +221,7 @@ st.markdown(
     /* Etiquetas tipo píldora del header */
     .yt-pill {
         background: #ffffff;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #919191;
         border-radius: 999px;
         padding: 0.35rem 0.8rem;
         font-size: 0.76rem;
@@ -518,37 +518,54 @@ st.markdown(
     /* =========================
        BARRA INFERIOR DEL CHAT
     ========================= */
-
+    
     [data-testid="stBottom"] {
-        background: #ffffff !important;
-        border-top: 1px solid #e5e7eb !important;
-        padding: 0.8rem 2rem !important;
+        background: #0f0f0f !important;
+        border-top: 1px solid #272727 !important;
+        padding: 0.9rem 2rem !important;
     }
-
+    
+    /* Contenedor interno */
     [data-testid="stBottom"] > div {
         max-width: 1050px !important;
         margin: 0 auto !important;
+        background: transparent !important;
     }
-
-    /* Caja de texto donde el usuario escribe */
+    
+    /* Caja completa del input */
     [data-baseweb="textarea"] {
         border-radius: 999px !important;
-        border: 1px solid #d1d5db !important;
-        background: #ffffff !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        border: 1px solid #303030 !important;
+        background: #1f1f1f !important;
+        box-shadow: none !important;
     }
-
+    
+    /* Textarea real */
     [data-baseweb="textarea"] textarea {
-        background: #ffffff !important;
-        color: #111827 !important;
+        background: #1f1f1f !important;
+        color: #f1f1f1 !important;
         font-size: 0.95rem !important;
         padding-top: 0.95rem !important;
         padding-left: 1.2rem !important;
     }
-
+    
+    /* Placeholder */
     [data-baseweb="textarea"] textarea::placeholder {
-        color: #9ca3af !important;
+        color: #aaaaaa !important;
         opacity: 1 !important;
+    }
+    
+    /* Botón enviar */
+    [data-testid="stChatInput"] button {
+        background: #ff0000 !important;
+        color: white !important;
+        border-radius: 999px !important;
+        border: none !important;
+    }
+    
+    /* Hover botón */
+    [data-testid="stChatInput"] button:hover {
+        background: #cc0000 !important;
     }
 
     /* Botón de enviar mensaje */
