@@ -542,8 +542,8 @@ st.markdown(
     
     /* Textarea real */
     [data-baseweb="textarea"] textarea {
-        background: #000000 !important;
-        color: #f1f1f1 !important;
+        background: #ffffff !important;
+        color: #ffffff !important;
         font-size: 0.95rem !important;
         padding-top: 0.95rem !important;
         padding-left: 1.2rem !important;
