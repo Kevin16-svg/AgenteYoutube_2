@@ -157,8 +157,7 @@ st.markdown(
         visibility: hidden;
     }
 
-    [data-testid="stChatMessage"],
-    [data-testid="stChatInput"],
+    /* Ocultar barra inferior nativa */
     [data-testid="stBottom"] {
         display: none !important;
     }
