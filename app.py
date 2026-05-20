@@ -748,12 +748,14 @@ if not st.session_state.messages:
         """,
         unsafe_allow_html=True,
     )
+
     st.markdown('<div class="empty-title">Hola, soy tu agente de YouTube</div>', unsafe_allow_html=True)
+
     st.markdown(
         """
         <div class="empty-text">
             Puedo analizar el rendimiento de <b>Las Damitas Histeria</b>, encontrar
-            en que episodio hablaron de un tema y recomendarte decisiones con datos.
+            en qué episodio hablaron de un tema y recomendarte decisiones con datos.
         </div>
         """,
         unsafe_allow_html=True,
