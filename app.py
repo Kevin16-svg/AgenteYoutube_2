@@ -157,12 +157,6 @@ st.markdown(
         visibility: hidden;
     }
 
-    /* Ocultar barra inferior nativa */
-    [data-testid="stBottom"] {
-        display: none !important;
-    }
-
-
     /* =========================
        HEADER SUPERIOR TIPO YOUTUBE
     ========================= */
