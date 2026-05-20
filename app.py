@@ -535,14 +535,14 @@ st.markdown(
     /* Caja completa del input */
     [data-baseweb="textarea"] {
         border-radius: 999px !important;
-        border: 1px solid #919191 !important;
+        border: 1px solid #ffffff !important;
         background: #1f1f1f !important;
         box-shadow: none !important;
     }
     
     /* Textarea real */
     [data-baseweb="textarea"] textarea {
-        background: #ffffff !important;
+        background: #000000 !important;
         color: #f1f1f1 !important;
         font-size: 0.95rem !important;
         padding-top: 0.95rem !important;
