@@ -526,23 +526,40 @@ st.markdown(
 # =========================
 # 6. HEADER
 # =========================
-
 videos_count = segment_stats.get("videos") or metrics.get("videos") or 0
-
 st.markdown(
     f"""
     <div class="yt-header-wrapper">
         <div class="yt-header-left">
-            <div class="yt-logo">PLAY</div>
+            <div class="yt-logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;fill:white;">
+                    <path d="M19.59 7a2.5 2.5 0 0 0-1.76-1.76C16.46 5 12 5 12 5s-4.46 0-5.83.24A2.5 2.5 0 0 0 4.41 7 26 26 0 0 0 4.17 12a26 26 0 0 0 .24 5 2.5 2.5 0 0 0 1.76 1.76C7.54 19 12 19 12 19s4.46 0 5.83-.24A2.5 2.5 0 0 0 19.59 17 26 26 0 0 0 19.83 12a26 26 0 0 0-.24-5zM10 15v-6l5 3-5 3z"/>
+                </svg>
+            </div>
             <div>
                 <div class="yt-title">Las Damitas Histeria</div>
-                <div class="yt-subtitle">Agente de analisis · Gemini + BigQuery</div>
+                <div class="yt-subtitle">Agente de análisis · Gemini + BigQuery</div>
             </div>
         </div>
         <div class="yt-header-right">
-            <div class="yt-pill">Gemini conectado</div>
-            <div class="yt-pill">{format_compact_number(videos_count)} videos</div>
-            <div class="yt-pill">{format_compact_number(segment_stats.get("segmentos"))} segmentos</div>
+            <div class="yt-pill">
+                <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#2BA84A;margin-right:6px;vertical-align:middle;"></span>
+                Gemini conectado
+            </div>
+            <div class="yt-pill">
+                <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:#555;margin-right:5px;vertical-align:middle;flex-shrink:0">
+                    <path d="M19.59 7a2.5 2.5 0 0 0-1.76-1.76C16.46 5 12 5 12 5s-4.46 0-5.83.24A2.5 2.5 0 0 0 4.41 7 26 26 0 0 0 4.17 12a26 26 0 0 0 .24 5 2.5 2.5 0 0 0 1.76 1.76C7.54 19 12 19 12 19s4.46 0 5.83-.24A2.5 2.5 0 0 0 19.59 17 26 26 0 0 0 19.83 12a26 26 0 0 0-.24-5zM10 15v-6l5 3-5 3z"/>
+                </svg>
+                {format_compact_number(videos_count)} videos
+            </div>
+            <div class="yt-pill">
+                <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:#555;margin-right:5px;vertical-align:middle;flex-shrink:0">
+                    <path d="M4 6h16M4 10h16M4 14h10"/>
+                    <circle cx="18" cy="17" r="3"/>
+                    <path d="M18 14v3l2 1"/>
+                </svg>
+                {format_compact_number(segment_stats.get("segmentos"))} segmentos
+            </div>
         </div>
     </div>
     """,
