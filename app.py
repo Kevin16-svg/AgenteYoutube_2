@@ -163,6 +163,50 @@ st.markdown(
     }
 
     /* =========================
+       BARRA DE PREGUNTAS ESTILO YOUTUBE
+    ========================= */
+    
+    .custom-chat-bar {
+        position: fixed;
+        bottom: 0;
+        left: 260px;
+        right: 0;
+        background: #ffffff;
+        border-top: 1px solid #e5e7eb;
+        padding: 0.85rem 2rem;
+        z-index: 999;
+    }
+    
+    .custom-chat-inner {
+        max-width: 1050px;
+        margin: 0 auto;
+    }
+    
+    /* Input de texto */
+    [data-testid="stTextInput"] input {
+        border-radius: 999px !important;
+        border: 1px solid #d1d5db !important;
+        background: #ffffff !important;
+        color: #111827 !important;
+        padding: 0.75rem 1.1rem !important;
+        font-size: 0.92rem !important;
+    }
+    
+    /* Botón enviar */
+    [data-testid="stFormSubmitButton"] button {
+        border-radius: 999px !important;
+        background: #ff0000 !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 800 !important;
+        height: 42px !important;
+    }
+    
+    [data-testid="stFormSubmitButton"] button:hover {
+        background: #cc0000 !important;
+    }
+
+    /* =========================
        HEADER SUPERIOR TIPO YOUTUBE
     ========================= */
 
@@ -736,19 +780,61 @@ for message in st.session_state.messages:
 
 
 # =========================
-# 11. CHAT
+# 11. CHAT PERSONALIZADO
 # =========================
-prompt = st.chat_input("Pregunta sobre el canal... ej: Que temas tuvieron mas engagement?")
+
+# Inicializar variable donde se guardará el prompt
+if "custom_prompt" not in st.session_state:
+    st.session_state.custom_prompt = None
 
 # ── Capturar prompts de los botones del sidebar ──
 if "prompt_sugerido" in st.session_state:
-    prompt = st.session_state.pop("prompt_sugerido")
+    st.session_state.custom_prompt = st.session_state.pop("prompt_sugerido")
+
+# ── Barra personalizada estilo YouTube ──
+st.markdown(
+    """
+    <div class="custom-chat-bar">
+        <div class="custom-chat-inner">
+    """,
+    unsafe_allow_html=True,
+)
+
+with st.form("custom_chat_form", clear_on_submit=True):
+    col_input, col_button = st.columns([8, 1])
+
+    with col_input:
+        prompt_form = st.text_input(
+            label="",
+            placeholder="Pregunta sobre el canal... ej: ¿Qué temas tuvieron más engagement?",
+            label_visibility="collapsed",
+        )
+
+    with col_button:
+        submitted = st.form_submit_button("Enviar")
+
+    if submitted and prompt_form.strip():
+        st.session_state.custom_prompt = prompt_form.strip()
+
+st.markdown(
+    """
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Usar el prompt guardado
+prompt = st.session_state.get("custom_prompt")
 
 if prompt:
     history_for_agent = st.session_state.messages[-8:]
+
     st.session_state.messages.append({"role": "user", "content": prompt})
+
     with st.chat_message("user"):
         st.markdown(prompt)
+
     with st.chat_message("assistant"):
         thinking_placeholder = st.empty()
         thinking_placeholder.markdown(
@@ -760,18 +846,32 @@ if prompt:
             """,
             unsafe_allow_html=True,
         )
+
         try:
             answer = agent.answer(prompt, history=history_for_agent)
+
             thinking_placeholder.empty()
             st.markdown(answer)
-            st.session_state.messages.append({"role": "assistant", "content": answer})
+
+            st.session_state.messages.append(
+                {"role": "assistant", "content": answer}
+            )
+
         except Exception as exc:
             thinking_placeholder.empty()
+
             error_message = (
                 "**Ocurrió un error al procesar tu pregunta.**\n\n"
                 f"`{str(exc)}`\n\n"
                 "Revisa Secrets, permisos de BigQuery y la tabla de segmentos."
             )
+
             st.error(error_message)
             st.exception(exc)
-            st.session_state.messages.append({"role": "assistant", "content": error_message})
+
+            st.session_state.messages.append(
+                {"role": "assistant", "content": error_message}
+            )
+
+    # Limpiar prompt para evitar que se vuelva a ejecutar en cada rerun
+    st.session_state.custom_prompt = None
