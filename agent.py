@@ -220,6 +220,8 @@ def detect_order_by(question: str, default: str = "views") -> str:
 def detect_limit(question: str, default: int = 5) -> int:
     match = re.search(r"\btop\s+(\d{1,2})\b", normalize_text(question))
     if not match:
+        match = re.search(r"\b(\d{1,2})\s+videos?\b", normalize_text(question))
+    if not match:
         return default
     return max(1, min(int(match.group(1)), 10))
 
@@ -246,19 +248,82 @@ def extract_person_for_opinion(question: str) -> Optional[str]:
     return None
 
 
-def sort_rows_for_growth(rows: list[dict[str, Any]], order_by: str = "views") -> list[dict[str, Any]]:
+METRIC_LABELS = {
+    "views": "views",
+    "likes": "likes",
+    "comentarios": "comentarios",
+    "engagement": "engagement",
+    "like_rate": "like rate",
+    "views_por_dia": "views por dia",
+    "views_por_minuto": "views por minuto",
+    "fecha": "fecha de publicacion",
+}
+
+
+def safe_float(value: Any) -> float:
+    try:
+        return float(value or 0)
+    except Exception:
+        return 0.0
+
+
+def growth_sort_key(row: dict[str, Any], order_by: str = "views") -> tuple:
     metric = ALLOWED_ORDER_COLUMNS.get(order_by, "views")
     if metric == "fecha_publicacion":
-        return sorted(rows, key=lambda row: str(row.get(metric) or ""), reverse=True)
-    return sorted(
-        rows,
-        key=lambda row: (
-            float(row.get(metric) or 0),
-            float(row.get("views") or 0),
-            float(row.get("engagement") or 0),
-        ),
-        reverse=True,
+        return (
+            str(row.get(metric) or ""),
+            safe_float(row.get("views")),
+            safe_float(row.get("engagement")),
+        )
+
+    if metric == "engagement":
+        return (
+            safe_float(row.get("engagement")),
+            safe_float(row.get("views")),
+            safe_float(row.get("comentarios")),
+            safe_float(row.get("likes")),
+        )
+
+    if metric == "views_por_minuto":
+        return (
+            safe_float(row.get("views_por_minuto")),
+            safe_float(row.get("views")),
+            safe_float(row.get("engagement")),
+        )
+
+    if metric == "views_por_dia":
+        return (
+            safe_float(row.get("views_por_dia")),
+            safe_float(row.get("views")),
+            safe_float(row.get("engagement")),
+        )
+
+    return (
+        safe_float(row.get(metric)),
+        safe_float(row.get("views")),
+        safe_float(row.get("engagement")),
+        safe_float(row.get("comentarios")),
     )
+
+
+def sort_rows_for_growth(rows: list[dict[str, Any]], order_by: str = "views") -> list[dict[str, Any]]:
+    return sorted(rows, key=lambda row: growth_sort_key(row, order_by), reverse=True)
+
+
+def add_rank_and_reason(rows: list[dict[str, Any]], order_by: str = "views") -> list[dict[str, Any]]:
+    metric = ALLOWED_ORDER_COLUMNS.get(order_by, "views")
+    label = METRIC_LABELS.get(order_by, order_by)
+    ranked = []
+    for rank, row in enumerate(sort_rows_for_growth(rows, order_by), start=1):
+        item = dict(row)
+        item["rank"] = rank
+        item["criterio_prioridad"] = (
+            f"Ordenado por {label}; desempate por views, engagement y comentarios "
+            "para priorizar crecimiento del canal."
+        )
+        item["metrica_principal"] = item.get(metric)
+        ranked.append(item)
+    return ranked
 
 
 # =========================
@@ -1031,7 +1096,7 @@ def generate_final_answer(
         extra_rules = """
 - Responde breve, ordenado y con humor ligero.
 - Muestra maximo 5 resultados numerados.
-- Ordena priorizando relevancia y alcance.
+- Respeta EXACTAMENTE el orden de "resultados"; ya viene priorizado por relevancia, views y potencial de alcance.
 - Para cada resultado incluye: titulo, minuto aproximado, fragmento breve, URL, views y likes.
 - Menciona views y likes solo como apoyo, sin analisis largo.
 - Di explicitamente que el minuto es aproximado.
@@ -1063,8 +1128,9 @@ def generate_final_answer(
         extra_rules = """
 - Responde como estratega de crecimiento de YouTube: claro, amigable y amante de subir el alcance.
 - Siempre explica el criterio de orden: la metrica pedida primero y views/engagement como desempate.
+- Respeta EXACTAMENTE el orden de "resultados"; no lo reordenes.
 - Presenta rankings numerados y ordenados, no listas aleatorias.
-- Para cada video o tema incluye la metrica principal y una lectura accionable.
+- Para cada video o tema incluye la metrica principal, views, engagement/comentarios si existen, y una lectura accionable.
 - Cierra con una recomendacion breve para crecer alcance.
 """
     elif response_mode == "ml":
@@ -1072,6 +1138,7 @@ def generate_final_answer(
 - Explica de forma simple si se usa ML y en que parte del agente.
 - Si hay resultados de prediccion, ordenalos por diferencia predicha y explica que significa.
 - Tono claro, ligeramente comico y enfocado en mejorar alcance.
+- Respeta el orden de los resultados recuperados.
 """
     else:
         extra_rules = """
@@ -1090,6 +1157,7 @@ Reglas obligatorias:
 - Si no hay informacion suficiente, dilo.
 - No respondas temas fuera del canal.
 - Tu objetivo es ayudar a crecer el alcance del canal: prioriza claridad, impacto, retencion, views y engagement.
+- Si el contexto trae "rank", usalo como orden oficial. No inventes otro ranking.
 {extra_rules}
 
 Historial reciente:
@@ -1201,6 +1269,7 @@ class RAGYouTubeAgent:
             results = self._semantic_topic_moments(topic, filters=filters, limit=min(limit, 5))
             if not results:
                 lexical = self.retriever.search_videos(topic, filters=filters, order_by=order_by, limit=min(limit, 5))
+                lexical = add_rank_and_reason(lexical, order_by="views")
                 context = {
                     "tipo": "respaldo_lexical",
                     "tema_consultado": topic,
@@ -1212,16 +1281,23 @@ class RAGYouTubeAgent:
                     "tipo": "busqueda_semantica_en_transcript_segments_transformers",
                     "tema_consultado": topic,
                     "nota_minutos": "Los minutos son aproximados si la transcripcion no trae timestamps reales por frase.",
+                    "criterio_orden": (
+                        "Primero relevancia semantica y coincidencias textuales; despues views, engagement "
+                        "y likes para priorizar videos con mayor alcance."
+                    ),
                     "resultados": results,
                 }
             return generate_final_answer(question, context, history=history, response_mode="moments")
 
         if intent == "related_videos":
-            semantic = sort_rows_for_growth(
+            semantic = add_rank_and_reason(
                 self._semantic_topic_moments(topic, filters=filters, limit=max(limit, 10)),
                 order_by=order_by,
             )[:limit]
-            lexical = self.retriever.search_videos(topic, filters=filters, order_by=order_by, limit=limit)
+            lexical = add_rank_and_reason(
+                self.retriever.search_videos(topic, filters=filters, order_by=order_by, limit=limit),
+                order_by=order_by,
+            )
             context = {
                 "tipo": "videos_relacionados_hibridos",
                 "tema": topic,
@@ -1262,7 +1338,10 @@ class RAGYouTubeAgent:
                     f"Ranking ordenado por {order_by}; si hay empate, se mira alcance total e interaccion."
                 ),
                 "filtros": filters,
-                "resultados": self.retriever.ranked_videos(filters=filters, order_by=order_by, limit=limit),
+                "resultados": add_rank_and_reason(
+                    self.retriever.ranked_videos(filters=filters, order_by=order_by, limit=limit),
+                    order_by=order_by,
+                ),
             }
             return generate_final_answer(question, context, history=history, response_mode="growth_rank")
 
@@ -1271,7 +1350,10 @@ class RAGYouTubeAgent:
                 "tipo": "videos_por_debajo_de_lo_esperado",
                 "modelo_ml": ML_MODEL_ID,
                 "explicacion": "El agente usa BigQuery ML en ML.PREDICT para comparar views reales contra views predichas.",
-                "resultados": self.retriever.predict_video_performance(limit=limit, order="underperforming"),
+                "resultados": self._rank_prediction_rows(
+                    self.retriever.predict_video_performance(limit=limit, order="underperforming"),
+                    order="underperforming",
+                ),
             }
             return generate_final_answer(question, context, history=history, response_mode="ml")
 
@@ -1280,7 +1362,10 @@ class RAGYouTubeAgent:
                 "tipo": "videos_que_superaron_prediccion",
                 "modelo_ml": ML_MODEL_ID,
                 "explicacion": "Diferencia positiva significa que el video tuvo mas views reales que las views predichas por el modelo.",
-                "resultados": self.retriever.predict_video_performance(limit=limit, order="overperforming"),
+                "resultados": self._rank_prediction_rows(
+                    self.retriever.predict_video_performance(limit=limit, order="overperforming"),
+                    order="overperforming",
+                ),
             }
             return generate_final_answer(question, context, history=history, response_mode="ml")
 
@@ -1306,7 +1391,10 @@ class RAGYouTubeAgent:
             "tipo": "fallback_hibrido",
             "pregunta": question,
             "resultados_semanticos": semantic,
-            "resultados_bigquery": self.retriever.search_videos(topic or question, filters=filters, order_by=order_by, limit=5),
+            "resultados_bigquery": add_rank_and_reason(
+                self.retriever.search_videos(topic or question, filters=filters, order_by=order_by, limit=5),
+                order_by=order_by,
+            ),
         }
         return generate_final_answer(question, context, history=history)
 
@@ -1325,7 +1413,42 @@ class RAGYouTubeAgent:
             top_k=40,
             min_score=MIN_SEMANTIC_SCORE,
         )
-        return group_best_segments_by_video(results, max_per_video=1, limit=limit)
+        ranked = sorted(
+            results,
+            key=lambda row: (
+                safe_float(row.get("lexical_hits")),
+                safe_float(row.get("score_semantico")),
+                safe_float(row.get("views")),
+                safe_float(row.get("engagement")),
+            ),
+            reverse=True,
+        )
+        return add_rank_and_reason(
+            group_best_segments_by_video(ranked, max_per_video=1, limit=limit),
+            order_by="views",
+        )
+
+    def _rank_prediction_rows(self, rows: list[dict[str, Any]], order: str) -> list[dict[str, Any]]:
+        reverse = order != "underperforming"
+        sorted_rows = sorted(
+            rows,
+            key=lambda row: (
+                safe_float(row.get("diferencia_predicha")),
+                safe_float(row.get("views_reales")),
+                safe_float(row.get("engagement")),
+            ),
+            reverse=reverse,
+        )
+        ranked = []
+        for rank, row in enumerate(sorted_rows, start=1):
+            item = dict(row)
+            item["rank"] = rank
+            item["criterio_prioridad"] = (
+                "Ordenado por diferencia entre views reales y views predichas; "
+                "desempate por views reales y engagement."
+            )
+            ranked.append(item)
+        return ranked
 
 
 # =========================
