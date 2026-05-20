@@ -512,7 +512,7 @@ st.markdown(
     }
 
     [data-testid="stChatInput"] button {
-        background: #ff0000 !important;
+        background: #ffffff !important;
         color: white !important;
         border-radius: 999px !important;
         border: none !important;
