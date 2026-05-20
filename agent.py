@@ -1118,6 +1118,8 @@ Reglas obligatorias:
 - Si las views son similares o faltan, usa engagement como desempate.
 - Si hay métricas, no solo las menciones: explica qué significan para mejorar el contenido.
 - Evita respuestas planas. Cada respuesta debe dejar una lectura útil para el creador.
+- Si el contexto incluye múltiples temas o videos sin orden explícito, prioriza los de mayor alcance y explica brevemente el criterio antes de listarlos.
+- No repitas la pregunta del usuario ni hagas introducción innecesaria. Ve directo al dato o la recomendación.
 """
 
     optimization_rules = """
@@ -1125,8 +1127,7 @@ Criterio de optimización para YouTube:
 - Primero prioriza videos con más views.
 - Después prioriza engagement: likes, comentarios, engagement_rate o interacciones.
 - Después prioriza potencial de contenido: tema repetible, momento interesante, frase fuerte o segmento que pueda convertirse en clip.
-- Cuando menciones un video, agrega una lectura accionable:
-  "Esto funcionó porque...", "Aquí hay oportunidad de clip...", "Este tema podría repetirse con..."
+- Cuando menciones un video, agrega una lectura breve que explique qué hizo funcionar a ese video o qué oportunidad representa para el canal. No uses frases genéricas; basa la lectura en las métricas del contexto.
 - Si hay un tema específico, responde dónde aparece y qué video conviene usar primero para explotar ese tema.
 """
 
@@ -1152,54 +1153,62 @@ Modo momentos:
         extra_rules = """
 Modo opinión:
 - Responde como analista de contenido, cercano y con humor ligero.
-- Da 3 observaciones y 2 recomendaciones concretas.
+- Da 3 observaciones basadas en métricas y 2 recomendaciones concretas.
 - Prioriza qué puede mejorar views, retención y engagement.
-- Si mencionas a una persona famosa, aclara que es simulación de estilo, no opinión real.
+- Si el contexto incluye una persona famosa, aclara explícitamente que es una simulación de estilo, no una opinión real de esa persona.
+- Si no hay persona famosa en el contexto, responde como analista del canal sin atribuir la voz a nadie.
+- Extensión máxima: 220 palabras.
 """
 
     elif response_mode == "sarcastic_opinion":
         extra_rules = """
 Modo opinión sarcástica:
 - Responde como una simulación sarcástica de un estratega obsesionado con retención, miniaturas, ritmo y alcance.
-- Aclara que NO es una opinión real de ninguna persona famosa.
-- Usa sarcasmo ligero y útil, no agresivo.
-- Da 3 observaciones filosas basadas en métricas.
+- Aclara al inicio que NO es una opinión real de ninguna persona famosa; es una simulación de estilo analítico.
+- Usa sarcasmo ligero y útil, no agresivo ni condescendiente.
+- Da 3 observaciones filosas basadas en las métricas del contexto.
 - Da 3 acciones concretas para crecer alcance.
 - Prioriza views, engagement, views por minuto, formatos y temas con tracción.
+- Extensión máxima: 250 palabras.
 """
 
     elif response_mode == "upload_day":
         extra_rules = """
 Modo mejor día para publicar:
-- Recomienda un día principal y un día alternativo.
-- Usa views, likes, comentarios, engagement y consistencia de muestra.
-- Si hay pocos videos en un día, menciona que la muestra es pequeña.
-- Explica el criterio de forma breve.
-- Cierra con una recomendación práctica para probar la siguiente publicación.
+- Recomienda un día principal y un día alternativo con base en los datos del contexto.
+- Usa views, likes, comentarios, engagement y consistencia de muestra para justificar la recomendación.
+- Si un día tiene menos de 3 videos en la muestra, indícalo explícitamente como dato poco confiable.
+- Explica el criterio de selección en máximo 2 líneas.
+- Cierra con una recomendación práctica y específica para la siguiente publicación.
+- Extensión máxima: 180 palabras.
 """
 
     elif response_mode == "growth_rank":
         extra_rules = """
 Modo ranking de crecimiento:
 - Responde como estratega de crecimiento de YouTube.
-- Explica el criterio de orden: métrica pedida primero y views/engagement como desempate.
+- Explica en una línea el criterio de orden antes de mostrar el ranking.
 - Respeta EXACTAMENTE el orden de "resultados".
 - Presenta rankings numerados.
 - Para cada video o tema incluye:
-  1. Métrica principal
+  1. Métrica principal con su valor
   2. Views
   3. Engagement, likes o comentarios si existen
-  4. Lectura accionable
-- Cierra con una recomendación clara para crecer alcance.
+  4. Una lectura breve basada en esas métricas, no una frase genérica
+- Cierra con una recomendación clara y específica para crecer alcance.
+- Extensión máxima: 300 palabras.
 """
 
     elif response_mode == "ml":
         extra_rules = """
 Modo machine learning:
-- Explica de forma simple si se usa ML y en qué parte del agente.
-- Si hay predicciones, ordénalas según el contexto recuperado.
-- Explica qué significa la predicción para tomar decisiones.
-- Tono claro, humano y enfocado en mejorar alcance.
+- Explica de forma simple y humana, sin jerga técnica innecesaria.
+- Si el contexto contiene "diferencia_predicha" con valores negativos, estás en modo underperforming: explica que esos videos tuvieron menos vistas de las esperadas y sugiere posibles causas revisando tema, formato o fecha.
+- Si el contexto contiene "diferencia_predicha" con valores positivos, estás en modo overperforming: explica qué hizo que esos videos superaran la predicción y qué se puede replicar.
+- Si el contexto explica el modelo pero no da predicciones, describe brevemente cómo funciona el modelo y en qué decisiones ayuda.
+- Ordena los resultados según el contexto recuperado; no los reordenes.
+- Tono claro y enfocado en qué debe hacer el creador con esa información.
+- Extensión máxima: 250 palabras.
 """
 
     else:
@@ -1207,22 +1216,16 @@ Modo machine learning:
 Modo normal:
 - Responde claro, humano y accionable.
 - No des una respuesta seca de una sola línea si hay datos suficientes.
-- Si mencionas videos, prioriza los de más views o mejor engagement.
-- Incluye una recomendación final breve orientada a crecimiento.
-- Evita párrafos largos.
+- Si el contexto incluye múltiples videos o temas, prioriza los de más views o mejor engagement y explica brevemente por qué.
+- Incluye una recomendación final breve y específica orientada a crecimiento, basada en los datos del contexto.
+- Evita párrafos largos. Si hay más de 3 elementos, usa lista numerada.
+- Extensión máxima: 250 palabras.
 """
 
     prompt = f"""
-Eres un agente conversacional RAG para creadores de contenido de YouTube.
-
-Reglas obligatorias:
-- Responde SOLO usando el contexto recuperado.
-- No inventes videos, metricas, URLs, fechas ni minutos.
-- Si el minuto es aproximado, dilo claramente.
-- Si no hay informacion suficiente, dilo.
-- No respondas temas fuera del canal.
-- Tu objetivo es ayudar a crecer el alcance del canal: prioriza claridad, impacto, retencion, views y engagement.
-- Si el contexto trae "rank", usalo como orden oficial. No inventes otro ranking.
+{base_personality}
+{base_rules}
+{optimization_rules}
 {extra_rules}
 
 Historial reciente:
@@ -1234,8 +1237,10 @@ Pregunta:
 Contexto recuperado:
 {compact_context(context)}
 
-Redacta la respuesta final en espanol:
+Redacta la respuesta final en español:
 """
+
+
     try:
         return gemini_generate(prompt, temperature=0.25)
     except Exception as exc:
