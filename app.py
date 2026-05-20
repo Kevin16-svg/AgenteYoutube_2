@@ -553,8 +553,9 @@ st.markdown(
 # =========================
 # 7. SIDEBAR
 # =========================
-
 with st.sidebar:
+ 
+    # ── Header ──
     st.markdown(
         """
         <div class="sidebar-title">
@@ -567,97 +568,51 @@ with st.sidebar:
         """,
         unsafe_allow_html=True,
     )
-
+ 
+    # ── Accesos rápidos (botones funcionales) ──
     st.markdown('<div class="sidebar-section-title">ACCESOS RAPIDOS</div>', unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class="sidebar-item">TOP <span>Top videos</span><small>Ranking por vistas</small></div>
-        <div class="sidebar-item">DIA <span>Mejor dia para publicar</span><small>Views, likes y engagement</small></div>
-        <div class="sidebar-item">TEM <span>Temas exitosos</span><small>Por interaccion</small></div>
-        <div class="sidebar-item">RES <span>Resumen del canal</span><small>Metricas generales</small></div>
-        <div class="sidebar-item">BUS <span>Buscar por tema</span><small>En que episodio hablaron de X</small></div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown('<div class="channel-status-card">', unsafe_allow_html=True)
+ 
+    accesos = [
+        ("🏆", "Top videos",              "Ranking por vistas",            "¿Cuáles son los 5 videos con más vistas?"),
+        ("📅", "Mejor día para publicar", "Views, likes y engagement",     "¿Qué día de la semana es mejor para publicar?"),
+        ("🔥", "Temas exitosos",          "Por interacción",               "¿Qué temas tienen mejor interacción?"),
+        ("📊", "Resumen del canal",       "Métricas generales",            "Dame un resumen general del canal"),
+        ("🔍", "Buscar por tema",         "En qué episodio hablaron de X", "¿En qué episodio se habló de familia?"),
+    ]
+ 
+    for emoji, titulo, subtitulo, prompt_texto in accesos:
+        col_btn, col_txt = st.columns([1, 5])
+        with col_btn:
+            st.markdown(f"<div style='font-size:20px;padding-top:6px;text-align:center'>{emoji}</div>", unsafe_allow_html=True)
+        with col_txt:
+            if st.button(titulo, key=f"acc_{titulo}", use_container_width=True):
+                st.session_state.prompt_sugerido = prompt_texto
+        st.markdown(f"<div style='font-size:11px;color:#999;margin:-8px 0 6px 44px'>{subtitulo}</div>", unsafe_allow_html=True)
+ 
+    st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
+ 
+    # ── Canal al día ──
     st.markdown('<div class="sidebar-section-title">CANAL AL DIA</div>', unsafe_allow_html=True)
     st.markdown(
         f"""
-        <div class="channel-row"><span>Videos</span><b>{format_compact_number(metrics.get("videos") or videos_count)}</b></div>
-        <div class="channel-row"><span>Views</span><b>{format_compact_number(metrics.get("views"))}</b></div>
-        <div class="channel-row"><span>Likes</span><b>{format_compact_number(metrics.get("likes"))}</b></div>
-        <div class="channel-row"><span>Comentarios</span><b>{format_compact_number(metrics.get("comentarios"))}</b></div>
-        <div class="channel-row"><span>Segmentos</span><b>{format_compact_number(segment_stats.get("segmentos"))}</b></div>
-        <div class="channel-row"><span>Estado</span><b class="agent-active">Activo</b></div>
+        <div class="channel-status-card">
+            <div class="channel-row"><span>Videos</span><b>{format_compact_number(metrics.get("videos") or videos_count)}</b></div>
+            <div class="channel-row"><span>Views</span><b>{format_compact_number(metrics.get("views"))}</b></div>
+            <div class="channel-row"><span>Likes</span><b>{format_compact_number(metrics.get("likes"))}</b></div>
+            <div class="channel-row"><span>Comentarios</span><b>{format_compact_number(metrics.get("comentarios"))}</b></div>
+            <div class="channel-row"><span>Segmentos</span><b>{format_compact_number(segment_stats.get("segmentos"))}</b></div>
+            <div class="channel-row"><span>Estado</span><b class="agent-active">Activo</b></div>
+        </div>
         """,
         unsafe_allow_html=True,
     )
-    st.markdown("</div>", unsafe_allow_html=True)
-
+ 
     st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-section-title">BIGQUERY</div>', unsafe_allow_html=True)
-
-    if segment_stats.get("existe"):
-        st.success("Tabla de segmentos lista")
-        st.caption(f"Tabla: `{SEGMENTS_TABLE_ID}`")
-        if segment_stats.get("embedding_model"):
-            st.caption(f"Embedding model: {segment_stats['embedding_model']}")
-        st.caption(f"Actualizado: {segment_stats.get('actualizado')}")
-    else:
-        st.warning("Tabla de segmentos no encontrada")
-        st.caption(f"Esperada: `{SEGMENTS_TABLE_ID}`")
-
-    if st.button("Probar BigQuery", use_container_width=True):
-        with st.spinner("Verificando conexion con BigQuery..."):
-            try:
-                info = retriever.test_connection()
-                st.success("Conexion exitosa")
-                st.markdown(
-                    f"""
-                    <div class="connection-info">
-                        <p><b>Tabla:</b> <code>{info["tabla"]}</code></p>
-                        <p><b>Filas:</b> <code>{info["filas"]}</code></p>
-                        <p><b>Columnas:</b> <code>{info["columnas"]}</code></p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-            except Exception as exc:
-                st.error("No se pudo conectar con BigQuery.")
-                st.exception(exc)
-
-    st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
-
-    if st.button("Limpiar conversacion", use_container_width=True):
+ 
+    # ── Limpiar conversación ──
+    if st.button("🗑️ Limpiar conversación", use_container_width=True, key="btn_clear"):
         st.session_state.messages = []
         st.rerun()
-
-
-# =========================
-# 8. BIENVENIDA
-# =========================
-
-st.markdown(
-    """
-    <div class="welcome-card">
-        <div class="welcome-top">
-            <div class="welcome-icon">AI</div>
-            <div>
-                <div class="welcome-title">Que puede hacer este agente?</div>
-                <div class="welcome-subtitle">
-                    Consulta metricas, rendimiento, temas, transcripciones, recomendaciones,
-                    mejores dias para publicar y momentos aproximados dentro de episodios.
-                </div>
-            </div>
-        </div>
-        <div class="welcome-tags-text">
-            Analytics · Videos · Engagement · Transcripciones · Gemini AI · BigQuery
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
 
 
 # =========================
