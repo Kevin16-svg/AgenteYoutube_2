@@ -242,8 +242,18 @@ st.markdown(
         gap: 1.2rem;
         margin-top: 1rem;
     }
-    .video-card {
-        overflow: hidden;
+   .video-card {
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #2c2c2c;
+    cursor: pointer;
+    }
+    .video-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.4);
+        border-color: #e63946;
     }
     .video-thumb {
         width: 100%;
@@ -262,13 +272,14 @@ st.markdown(
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        line-height: 1.3;
+        margin-bottom: 0.3rem;
     }
     .video-stats {
         font-size: 0.7rem;
         color: #a0a0a0;
         display: flex;
         justify-content: space-between;
-        margin-top: 0.4rem;
     }
 
     /* Gráfico (matplotlib) - se ajustará con estilo propio */
@@ -447,19 +458,42 @@ with col_izq:
         cols = st.columns(3)
         for idx, video in enumerate(top_videos[:6]):
             with cols[idx % 3]:
-                thumb_url = video.get('thumbnail_url', 'https://via.placeholder.com/320x180?text=No+Thumbnail')
+                titulo = video.get('titulo_video', 'Sin título')
+                views = video.get('views', 0)
+                likes = video.get('likes', 0)
+                engagement = video.get('engagement', 0)
+                url_video = video.get('url_video', '')
+                
+                # Extraer video_id de la URL de YouTube
+                video_id = None
+                if url_video:
+                    if 'v=' in url_video:
+                        video_id = url_video.split('v=')[1].split('&')[0]
+                    elif 'youtu.be/' in url_video:
+                        video_id = url_video.split('youtu.be/')[1].split('?')[0]
+                
+                # Generar miniatura desde YouTube (calidad media)
+                if video_id:
+                    thumb_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+                else:
+                    thumb_url = "https://placehold.co/320x180/1e1e1e/e63946?text=Preview+No+Disponible"
+                
+                # Tarjeta cliqueable
                 st.markdown(f"""
-                <div class="video-card">
-                    <img class="video-thumb" src="{thumb_url}" onerror="this.src='https://via.placeholder.com/320x180?text=Error'">
-                    <div class="video-info">
-                        <div class="video-title">{video.get('titulo_video', 'Sin título')[:60]}</div>
-                        <div class="video-stats">
-                            <span>👁 {video.get('views', 0):,}</span>
-                            <span>❤️ {video.get('likes', 0):,}</span>
-                            <span>📈 {video.get('engagement', 0):.1%}</span>
+                <a href="{url_video}" target="_blank" style="text-decoration: none;">
+                    <div class="video-card">
+                        <img class="video-thumb" src="{thumb_url}" loading="lazy"
+                            onerror="this.src='https://placehold.co/320x180/1e1e1e/e63946?text=Error+Cargar'">
+                        <div class="video-info">
+                            <div class="video-title">{titulo}</div>
+                            <div class="video-stats">
+                                <span>👁 {views:,}</span>
+                                <span>❤️ {likes:,}</span>
+                                <span>📈 {engagement:.1%}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
                 """, unsafe_allow_html=True)
 
     # --- Tendencias de contenido ---
